@@ -1,16 +1,17 @@
 import React from "react";
-import { NativeSelect, FormControl } from "@material-ui/core";
 import Select from "react-select";
 import "./StatePicker.scss";
-import { getStatesData } from "../../api/api";
+import { getTotalData, getStatesData } from "../../api/api";
 export default class StatePicker extends React.Component {
-	constructor() {
-		super();
+	constructor(props) {
+		super(props);
 		this.state = { picker: {} };
 	}
 	async componentDidMount() {
+		const { state, deaths, recovered, confirmed } = await getTotalData();
 		const picker = await getStatesData();
-		this.setState({ picker });
+		picker[state] = { deaths, confirmed, recovered };
+		this.setState({ picker: picker });
 	}
 	render() {
 		const { picker } = this.state;
@@ -19,6 +20,16 @@ export default class StatePicker extends React.Component {
 			label: value
 		}));
 
-		return <Select options={options} />;
+		return (
+			<Select
+				className="select-container"
+				defaultValue={{ value: picker["Total"], label: "Total" }}
+				onChange={(e) => {
+					const { handleChange } = this.props;
+					handleChange(e.value);
+				}}
+				options={options}
+			/>
+		);
 	}
 }

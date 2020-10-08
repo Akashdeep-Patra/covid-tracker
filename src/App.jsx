@@ -10,19 +10,26 @@ export default class App extends React.Component {
 			deaths: 0,
 			confirmed: 0,
 			recovered: 0,
-			state: ""
+			state: "",
+			picker: {}
 		};
 	}
-
+	handleChange = (value) => {
+		// console.log(value);
+		const { deaths, confirmed, recovered, state } = this.state.picker[value];
+		this.setState({ deaths, confirmed, recovered, state });
+	};
 	async componentDidMount() {
 		const { deaths, confirmed, state, recovered } = await getTotalData();
-		this.setState({ deaths, confirmed, state, recovered });
+		const picker = await getStatesData();
+		picker[state] = { deaths, confirmed, recovered };
+		this.setState({ deaths, confirmed, state, recovered, picker });
 	}
 	render() {
 		const { deaths, confirmed, recovered } = this.state;
 		return (
 			<div className={style.container}>
-				<StatePicker />
+				<StatePicker handleChange={this.handleChange} />
 				<Cards data={{ deaths, confirmed, recovered }} />
 			</div>
 		);
