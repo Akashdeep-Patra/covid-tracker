@@ -26,9 +26,10 @@ export default class App extends React.Component {
 		this.setState({ deaths, confirmed, state, recovered, picker });
 	}
 	render() {
-		const { deaths, confirmed, recovered } = this.state;
+		const { deaths, confirmed, recovered, state } = this.state;
 		return (
 			<div className={style.container}>
+				<Chart data={{ deaths, confirmed, recovered, state }} />
 				<StatePicker handleChange={this.handleChange} />
 				<Cards data={{ deaths, confirmed, recovered }} />
 			</div>
